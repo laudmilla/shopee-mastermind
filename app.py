@@ -1,7 +1,8 @@
 import streamlit as st
 import google.generativeai as genai
 
-st.set_page_config(page_title="Shopee Mastermind", page_icon="🚀")
+# Configuração da Página
+st.set_page_config(page_title="Mestre da Shopee", page_icon="🚀")
 
 st.markdown("""
     <style>
@@ -11,18 +12,23 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.title("🚀 Shopee Mastermind AI")
-genai.configure(api_key="AIzaSyB1evYmvvwE1mR248p3BBNgFntyJtv0EmQ")
-model = genai.GenerativeModel('gemini-3-flash-preview')
+
+# USANDO O SECRETS PARA SEGURANÇA
+try:
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    model = genai.GenerativeModel('gemini-1.5-flash')
+except Exception as e:
+    st.error("Erro na Chave: Configure o Secrets no Streamlit.")
 
 produto = st.text_input("Produto Minerado:", placeholder="Ex: Garrafa Térmica")
 
 if st.button("GERAR ROTEIRO DE ELITE"):
     if produto:
         with st.spinner('Aplicando Neuromarketing...'):
-            prompt = f"Expert Shopee. Produto: {produto}. Gere narração de 30s e legenda de até 150 caracteres."
             try:
+                prompt = f"Especialista Shopee. Produto: {produto}. Gere narração de 30s e legenda de até 150 caracteres."
                 response = model.generate_content(prompt)
                 st.success("Material Gerado!")
-                st.text_area("Resultado para Copiar:", response.text, height=300)
+                st.text_area("Resultado:", response.text, height=300)
             except Exception as e:
                 st.error(f"Erro na IA: {e}")
