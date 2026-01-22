@@ -16,7 +16,7 @@ else:
 # 2. Inicialização do Modelo (Caminho absoluto para evitar 404)
 try:
     # Forçamos o modelo sem o prefixo 'models/' se o anterior falhou
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-pro')
 except Exception as e:
     st.error(f"Erro ao carregar modelo: {e}")
 
