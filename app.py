@@ -1,34 +1,33 @@
 import streamlit as st
 import google.generativeai as genai
 
-# Configuração da Página
-st.set_page_config(page_title="Mestre da Shopee", page_icon="🚀")
+# Configuração visual
+st.set_page_config(page_title="Shopee Mastermind", page_icon="🚀")
 
-st.markdown("""
-    <style>
-    .stButton>button { background-color: #EE4D2D; color: white; border-radius: 10px; width: 100%; }
-    .main { background-color: #f5f5f5; }
-    </style>
-    """, unsafe_allow_html=True)
+# Estilo laranja Shopee
+st.markdown("<style>.stButton>button { background-color: #EE4D2D; color: white; }</style>", unsafe_allow_html=True)
 
 st.title("🚀 Shopee Mastermind AI")
 
-# USANDO O SECRETS PARA SEGURANÇA
+# Configuração Segura
 try:
+    # Busca a chave que você salvou no Secrets do Streamlit
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-    model = genai.GenerativeModel('gemini-pro')
+    # Usa o modelo mais estável disponível
+    model = genai.GenerativeModel('gemini-1.5-flash')
 except Exception as e:
-    st.error("Erro na Chave: Configure o Secrets no Streamlit.")
+    st.error(f"Erro de Configuração: {e}")
 
-produto = st.text_input("Produto Minerado:", placeholder="Ex: Garrafa Térmica")
+produto = st.text_input("Produto Minerado:", placeholder="Ex: garrafa termica")
 
 if st.button("GERAR ROTEIRO DE ELITE"):
     if produto:
-        with st.spinner('Aplicando Neuromarketing...'):
+        with st.spinner('Gerando roteiro de vendas...'):
             try:
-                prompt = f"Especialista Shopee. Produto: {produto}. Gere narração de 30s e legenda de até 150 caracteres."
+                prompt = f"Crie um roteiro de 30 segundos para vídeo de Shopee sobre: {produto}. Foque em benefícios e termine com uma chamada para ação."
+                # O comando abaixo agora usará a versão correta da API automaticamente
                 response = model.generate_content(prompt)
-                st.success("Material Gerado!")
-                st.text_area("Resultado:", response.text, height=300)
+                st.success("Roteiro Criado!")
+                st.write(response.text)
             except Exception as e:
                 st.error(f"Erro na IA: {e}")
