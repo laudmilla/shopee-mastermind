@@ -3,25 +3,25 @@ import google.generativeai as genai
 
 st.title("🚀 Shopee Mastermind AI")
 
-# 1. Configuração de Conexão
+# Configuração de Conexão Estável
 if "GEMINI_API_KEY" in st.secrets:
     api_key = st.secrets["GEMINI_API_KEY"]
-    # FORÇAR VERSÃO V1 PARA EVITAR O ERRO 404 V1BETA
+    # ESTA LINHA É A CHAVE: Força o uso da API v1 estável
     genai.configure(api_key=api_key, transport='rest') 
     model = genai.GenerativeModel('gemini-1.5-flash')
 else:
     st.error("Configure sua GEMINI_API_KEY nos Secrets!")
     st.stop()
 
-# 2. Interface
 produto = st.text_input("Qual o produto?")
 
 if st.button("GERAR ROTEIRO"):
     if produto:
         with st.spinner('Gerando...'):
             try:
-                # Chamada direta e simples
-                response = model.generate_content(f"Roteiro de vendas Shopee: {produto}")
+                # Chamada direta
+                response = model.generate_content(f"Roteiro Shopee para: {produto}")
                 st.write(response.text)
             except Exception as e:
+                # Se o erro 404 aparecer, o código vai nos dizer o motivo exato
                 st.error(f"Erro: {e}")
