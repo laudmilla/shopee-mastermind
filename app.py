@@ -1,42 +1,27 @@
 import streamlit as st
 import google.generativeai as genai
 
-# Título da aplicação
 st.title("🚀 Shopee Mastermind AI")
 
-# Verificação e configuração da API
+# Configuração de segurança
 if "GEMINI_API_KEY" in st.secrets:
     api_key = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=api_key)
-    # Usar 'models/gemini-1.5-flash' garante que a API localize o modelo corretamente
+    # Adicionamos 'models/' para garantir que a API encontre o modelo
     model = genai.GenerativeModel('models/gemini-1.5-flash')
 else:
-    st.error("ERRO: A chave 'GEMINI_API_KEY' não foi encontrada nos Secrets do Streamlit.")
+    st.error("Chave API não configurada nos Secrets!")
     st.stop()
 
-# Entrada do usuário
-produto = st.text_input("Qual produto você minerou?", placeholder="Ex: Mini Processador")
+produto = st.text_input("Qual o produto?", placeholder="Ex: Mini Processador")
 
-if st.button("GERAR ESTRATÉGIA DE VENDA"):
+if st.button("GERAR ROTEIRO"):
     if produto:
-        with st.spinner('A IA está analisando o produto e criando o roteiro...'):
+        with st.spinner('Criando estratégia de vendas...'):
             try:
-                # Prompt direto para conversão em vendas
-                prompt = (
-                    f"Atue como um especialista em vendas na Shopee. "
-                    f"Crie um roteiro de vídeo de 30 segundos focado em benefícios para o produto: {produto}. "
-                    f"Ao final, inclua uma legenda curta de até 150 caracteres com hashtags."
-                )
-                
+                prompt = f"Crie um roteiro de vídeo curto e persuasivo para vender {produto} na Shopee."
                 response = model.generate_content(prompt)
-                
-                # Exibição do resultado
-                st.success("Roteiro pronto para uso!")
-                st.markdown("---")
-                st.markdown(response.text)
-                
+                st.markdown("### 📝 Roteiro Sugerido:")
+                st.write(response.text)
             except Exception as e:
-                # Caso ocorra um erro, ele será detalhado aqui
-                st.error(f"Ocorreu um erro técnico: {e}")
-    else:
-        st.warning("Por favor, digite o nome de um produto.")
+                st.error(f"Erro na conexão com a IA: {e}")
