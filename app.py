@@ -1,13 +1,14 @@
 import streamlit as st
 import google.generativeai as genai
+from google.generativeai.types import RequestOptions
 
 st.title("🚀 Shopee Mastermind AI")
 
-# Configuração de Conexão Estável
+# Configuração da Chave
 if "GEMINI_API_KEY" in st.secrets:
     api_key = st.secrets["GEMINI_API_KEY"]
-    # ESTA LINHA É A CHAVE: Força o uso da API v1 estável
-    genai.configure(api_key=api_key, transport='rest') 
+    # Forçamos a biblioteca a usar a API v1 estável e ignorar o v1beta
+    genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-1.5-flash')
 else:
     st.error("Configure sua GEMINI_API_KEY nos Secrets!")
@@ -17,11 +18,14 @@ produto = st.text_input("Qual o produto?")
 
 if st.button("GERAR ROTEIRO"):
     if produto:
-        with st.spinner('Gerando...'):
+        with st.spinner('Conectando ao servidor oficial...'):
             try:
-                # Chamada direta
-                response = model.generate_content(f"Roteiro Shopee para: {produto}")
+                # O segredo: RequestOptions força a versão 'v1' na chamada
+                response = model.generate_content(
+                    f"Roteiro de vendas: {produto}",
+                    request_options=RequestOptions(api_version='v1')
+                )
+                st.markdown("---")
                 st.write(response.text)
             except Exception as e:
-                # Se o erro 404 aparecer, o código vai nos dizer o motivo exato
-                st.error(f"Erro: {e}")
+                st.error(f"Erro de Conexão: {e}")
